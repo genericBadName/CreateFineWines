@@ -1,0 +1,15 @@
+{
+  "type": "createfinewines:fermenting",
+  "ingredients": [
+    {
+      "fluid": "createfinewines:red_grape_juice",
+      "amount": 1000
+    }
+  ],
+  "results": [
+    {
+      "fluid": "createfinewines:red_wine",
+      "amount": 1000
+    }
+  ]
+}

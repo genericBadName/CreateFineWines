@@ -1,0 +1,15 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "fluid": "createfinewines:red_grape_juice",
+      "amount": 500
+    }
+  ],
+  "results": [
+    {
+      "fluid": "createfinewines:white_grape_juice",
+      "amount": 500
+    }
+  ]
+}

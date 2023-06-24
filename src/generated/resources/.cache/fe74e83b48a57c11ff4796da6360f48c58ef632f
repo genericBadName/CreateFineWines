@@ -1,0 +1,8 @@
+// 1.19.2	2023-06-23T15:17:28.7204868	Registrate Provider for createfinewines [Recipes, Advancements, Loot tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+7d04408cce4b00f6a3b5cef2000397aa0c92eb67 assets/createfinewines/blockstates/wine_barrel.json
+9673986464e4ff2dadfadda2c7487e6462934c2e assets/createfinewines/lang/en_ud.json
+d29cd3f30bdcab4ce5bf4be814fe399c60f0888a assets/createfinewines/lang/en_us.json
+cc0c114bd73f133d998fc167b091623be0c111ea assets/createfinewines/models/item/wine_barrel.json
+7fc778e76765f5d5f146c059f857ec10da7154c6 data/createfinewines/loot_tables/blocks/wine_barrel.json
+90652230e46fd97a2bd619cf116b907e3c3c50eb data/minecraft/tags/blocks/mineable/axe.json
+90652230e46fd97a2bd619cf116b907e3c3c50eb data/minecraft/tags/blocks/mineable/pickaxe.json

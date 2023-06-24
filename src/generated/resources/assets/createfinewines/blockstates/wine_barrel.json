@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "createfinewines:block/wine_barrel"
+    }
+  }
+}
