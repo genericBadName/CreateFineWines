@@ -4,7 +4,10 @@ import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import com.simibubi.create.foundation.utility.Lang;
+import genericbadname.createfinewines.CreateFineWines;
 import genericbadname.createfinewines.recipe.FermentingRecipe;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +26,7 @@ public class WineBarrelBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     private static final int TANK_CAPACITY= 1000; //in milibuckets
     private static final int PROCESSING_TIME= 200; //in ticks
+    private static final String QUALITY_TAG_KEY= CreateFineWines.MODID+":quality";
     public int processingTicks;
     public boolean running;
 
@@ -54,24 +58,49 @@ public class WineBarrelBlockEntity extends SmartBlockEntity implements IHaveGogg
     public void tick() {
         super.tick();
 
-        if(!recipePresent()) return;
+        if(!recipePresent()&&!agingPresent()) return;
         if(!running) {
             processingTicks = PROCESSING_TIME;
             running=true;
         }
         processingTicks--;
         if (processingTicks == 0) {
-            applyRecipe();
+            if(agingPresent())
+                applyAging();
+            if(recipePresent())
+                applyRecipe();
             internalTank.allowExtraction();
             sendData();
             running=false;
         }
     }
 
+    private void applyAging() {
+        CompoundTag tag=internalTank.getPrimaryHandler().getFluid().getOrCreateTag();
+        int i=tag.getInt(QUALITY_TAG_KEY);
+        i++;
+        System.out.println(level);
+        System.out.println(i);
+        tag.putInt(QUALITY_TAG_KEY,i);
+    }
+
+    private boolean agingPresent() {
+        if(internalTank==null||internalTank.getPrimaryHandler().isEmpty()) return false;
+
+        if(internalTank.getPrimaryHandler().getFluid().getOrCreateTag().contains(QUALITY_TAG_KEY)) {
+           return internalTank.getPrimaryHandler().getFluid().getOrCreateTag().getInt(QUALITY_TAG_KEY)<10;
+        }
+       return false;
+    }
+
 
     private void applyRecipe() {
 
-        internalTank.getPrimaryHandler().setFluid(new FluidStack(FermentingRecipe.getResult(internalTank.getPrimaryHandler().getFluid(),level),internalTank.getPrimaryHandler().getFluidAmount()));
+        FluidStack wine=new FluidStack(FermentingRecipe.getResult(internalTank.getPrimaryHandler().getFluid(),level),internalTank.getPrimaryHandler().getFluidAmount());
+        CompoundTag tag= wine.getOrCreateTag();
+        tag.putInt(QUALITY_TAG_KEY,1);
+        wine.setTag(tag);
+        internalTank.getPrimaryHandler().setFluid(wine);
     }
 
     private boolean recipePresent() {
@@ -104,7 +133,25 @@ public class WineBarrelBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return containedFluidTooltip(tooltip, isPlayerSneaking, internalTank.getCapability()
+        containedFluidTooltip(tooltip, isPlayerSneaking, internalTank.getCapability()
                 .cast());
+        if(!internalTank.getPrimaryHandler().isEmpty()) {
+            if (internalTank.getPrimaryHandler().getFluid().getOrCreateTag().contains(QUALITY_TAG_KEY)) {
+                int quality = internalTank.getPrimaryHandler().getFluid().getOrCreateTag().getInt(QUALITY_TAG_KEY);
+                ChatFormatting color;
+                if (quality < 4)
+                    color = ChatFormatting.RED;
+                else if (quality > 7)
+                    color = ChatFormatting.GREEN;
+                else
+                    color = ChatFormatting.YELLOW;
+
+                tooltip.add(Lang.builder()
+                        .text("     Quality ")
+                        .add(Component.literal("|".repeat(quality)).withStyle(color, ChatFormatting.BOLD))
+                        .component());
+            }
+        }
+        return true;
     }
 }
